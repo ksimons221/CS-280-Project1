@@ -19,7 +19,7 @@ function [h, t] = computeH(s, d)
     
     sHomogeneous = [s; ones(1,m)];
     dHomogeneous = [d; ones(1,r)];
-    %dHomogeneous = dHomogeneous.*depth;
+    dHomogeneous = dHomogeneous.*depth;
     
     h = dHomogeneous * sHomogeneous' * (sHomogeneous * sHomogeneous')^-1;
     t = maketform('projective', h');
