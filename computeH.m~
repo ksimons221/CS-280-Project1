@@ -23,8 +23,7 @@ function [h, t] = computeH(s, d)
     
     h = dHomogeneous * sHomogeneous' * (sHomogeneous * sHomogeneous')^-1;
     t = maketform('projective', h');
-    %return;
-    
+
     ColumnSource1 = sHomogeneous(:,1);  
     ColumnSource2 = sHomogeneous(:,2);  
     ColumnSource3 = sHomogeneous(:,3);  

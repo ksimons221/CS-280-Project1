@@ -39,7 +39,8 @@ widthCeiling = abs(ceilrx(1) - ceilrx(2));
 heightLeft = abs(leftry(1) - leftry(4));
 heightRight = abs(rightry(2) - rightry(3));
 
-destFloor = generateSquare(widthFloor,depthFloor);
+%destFloor = generateSquare(widthFloor,depthFloor);
+destFloor = generateSquare(depthFloor,widthFloor);
 destCeiling = generateSquare(widthCeiling,depthCeiling);
 destLeft = generateSquare(depthFloor, heightLeft);
 destRight = generateSquare(depthFloor, heightRight);
@@ -62,23 +63,20 @@ leftIm = imtransform(im,leftTran);
 rightIm = imtransform(im,rightTran);
 
 
-
-
-
 ceilPane = imtransform(im, ceilTran, 'XData', [destCeiling(1,1), destCeiling(1,2)], 'YData', [destCeiling(2,1), destCeiling(2,3)]);
 
 backPane = imtransform(im, maketform('projective', eye(3)),'XData', [backrx(1,1), backrx(1,2)], 'YData', [backry(1,1), backry(1,3)]);
 
+floorPane = imtransform(im, floorTran, 'XData', [destFloor(1,1), destFloor(1,2)], 'YData', [destFloor(1,1), destFloor(1,3)]);
+
 leftPane = imtransform(im, leftTran, 'XData', [destLeft(1,1), destLeft(1,2)], 'YData', [destLeft(2,1), destLeft(2,3)]);
 
-rigthPane = imtransform(im, rightTran, 'XData', [destRight(1,1), destRight(1,2)], 'YData', [destRight(2,1), destRight(2,3)]);
+rightPane = imtransform(im, rightTran, 'XData', [destRight(1,1), destRight(1,2)], 'YData', [destRight(2,1), destRight(2,3)]);
 
 % display the expended image
 figure(2);
-imshow(ceilIm);
-%imshow(ceilPane);
-%imshow(floorIm);
-return
+%imshow(floorPane);
+%return
 
 planex = [0 0 0; 0 0 0];
 planey = [-1 0 1; -1 0 1];
@@ -99,33 +97,20 @@ leftPlain2 = [-1 -1 -1; -1 -1 -1];
 leftPlain3 = [1 1 1; -1 -1 -1];
 warp(leftPlain1,leftPlain2,leftPlain3,leftPane);
 
-
 ceilPlain1 = [-1 -1 -1; 1 1 1];
 ceilPlain2 = [-1 0 1; -1 0 1];
 ceilPlain3 = [1 1 1; 1 1 1];
 warp(ceilPlain1,ceilPlain2,ceilPlain3,ceilPane);
 
-%warp(0,1,2, ceilPane);
-% display the expended image
-%figure(3);
-%imshow(floorImage);
-%imshow(b);
-
-
 floorPlain1 = [1 1 1; -1 -1 -1];
 floorPlain2 = [-1 0 1; -1 0 1];
 floorPlain3 = [-1 -1 -1; -1 -1 -1];
-%warp(floorPlain1,floorPlain2,floorPlain3,floorPane);
+warp(floorPlain1,floorPlain2,floorPlain3,floorPane);
 
-
-
-rigthPlain1 = [1 0 -1; 1 0 -1];
-rigthPlain2 = [1 1 1; 1 1 1];
-rigthPlain3 = [1 1 1; -1 -1 -1];
-%warp(rigthPlain1,rigthPlain2,rigthPlain3, rightPane);
-
-%ceil top left
-
+rightPlain1 = [1 0 -1; 1 0 -1];
+rightPlain2 = [1 1 1; 1 1 1];
+rightPlain3 = [1 1 1; -1 -1 -1];
+warp(rightPlain1,rightPlain2,rightPlain3, rightPane);
 
 %imshow(bim);
 return;
