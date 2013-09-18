@@ -9,10 +9,7 @@ function [h, t] = computeH(s, d)
     
     %% Use maketform to generate a transformation that imtransform will 
     % understand.
-    s(1,1) = s(1,2); 
-    s(1,2) = s(1,4); 
-    s(1,3) = s(1,4); 
-    s(1,4) = s(1,1); 
+
 
     [n,m] = size(s);
     [q,r] = size(d);
@@ -55,7 +52,7 @@ else
 end
 v = (reshape(U(:,9), 3, 3)).';
 h = v./v(3,3);    
-keyboard;
+
 t = maketform('projective', h');
 
 

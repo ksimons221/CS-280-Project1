@@ -9,6 +9,7 @@ clear all;
 clc;
 close all;
 
+f = 800;
 
 
 im = imread('sjerome.jpg');
@@ -24,87 +25,60 @@ figure(1);
 
 
 
-% TEST CODE TO FIND DEPTH
-imHeight = size(bim_alpha,2);
-imWidth = size(bim_alpha,1);
-focal = 800;
-[ceilrz, floorrz, leftrz, rightrz, backrz] = generateDepth(imHeight, focal, vy, floorry(3));
-d = backrz(1);
-
-backrx = backrx(1:4);
-backry = backry(1:4);
 
 
-
-vyMatrix = [vy, vy, vy, vy];
-vxMatrix = [vx, vx, vx, vx];
-
-
-
-ratio = d / focal;
-
-%keyboard;
-
-realBackX = (backrx - vxMatrix).*ratio + vxMatrix;
-realBackY = (backry - vyMatrix).*ratio + vyMatrix;
-
-heigth = abs(realBackY(3) - realBackY(1));
+depthFloor =generateDepth(abs(vy-floorry(1)),abs(vy-floorry(3)),f);
+depthCeiling = generateDepth(abs(vy-ceilry(3)),abs(vy-ceilry(1)),f);
+depthRight = generateDepth(abs(vx- rightrx(1)), abs(vx-rightrx(3)), f);
+depthLeft = generateDepth(abs(vx- leftrx(3)), abs(vx-leftrx(1)), f);
 
 
-width = abs(realBackX(1) - realBackX(2));
-dest = [0, width, width, 0; 0, 0, -d, -d];
+widthFloor = abs(floorrx(3) - floorrx(4));
+widthCeiling = abs(ceilrx(1) - ceilrx(2));
 
-dest = dest.* -1;
-    
-src =  [floorrx; floorry];
+heightLeft = abs(leftry(1) - leftry(4));
+heightRight = abs(rightry(2) - rightry(3));
 
-ceilingDest = [0, width, width, 0; 0,0,heigth,heigth ] ;
-ceilingSrc = [ceilrx;  ceilry];
+destFloor = generateSquare(widthFloor,depthFloor);
+destCeiling = generateSquare(widthCeiling,depthCeiling);
+destLeft = generateSquare(depthFloor, heightLeft);
+destRight = generateSquare(depthFloor, heightRight);
 
-leftDest = [0, d, d, 0; 0,0,heigth,heigth ] ;
-leftSrc = [leftrx;  leftry];
-
-rightDest = [0, d, d, 0; 0,0,heigth,heigth ] ;
-rightSrc = [rightrx;  rightry];
-
-
-% END
-
-% leftd = [];
-% floord = [0,d,d,0; 0,0,width, width ];
- %timfloord = []
- %[lefth, transformationl] = computeH(sl, leftd);
- %[floorh, transformationf ] = computeH(src, dest);
-
- %[ceilH, ceilTran] = computeH(ceilingSrc, ceilingDest);
- %[leftH, leftTran] = computeH(leftSrc, leftDest);
- [rightH, rightTran] = computeH(rightSrc, rightDest);
-
- 
- 
- 
- %ceilImage = imtransform(im, ceilTran);
- %leftImage = imtransform(im, leftTran);
- rightImage = imtransform(im, rightTran);
-
- 
-%leftWallImage = imtransform(im, transformationl);
-%floorImage = imtransform(im, transformationf);
+srcFloor = [floorrx;floorry];
+srcCeiling = [ceilrx; ceilry];
+srcRight = [rightrx; rightry];
+srcLeft = [leftrx; leftry];
 
 
+[floorH, floorTran] = computeH(srcFloor, destFloor);
+[rightH, rightTran] = computeH(srcRight, destRight);
+[leftH, leftTran] = computeH(srcLeft, destLeft);
+[ceilH, ceilTran] = computeH(srcCeiling, destCeiling);
+
+
+ceilIm = imtransform(im,ceilTran);
+floorIm = imtransform(im,floorTran);
+leftIm = imtransform(im,leftTran);
+rightIm = imtransform(im,rightTran);
 
 % display the expended image
 figure(2);
 %imshow(backPane);
 %imshow(ceilPane);
-imshow(rightImage);
-return
+%imshow(floorIm);
+%return
+
+
 
 ceilPane = imtransform(im, ceilTran, 'XData', [ceilingDest(1,1), ceilingDest(1,2)], 'YData', [ceilingDest(2,1), ceilingDest(2,3)]);
 
 backPane = imtransform(im, maketform('projective', eye(3)),'XData', [backrx(1,1), backrx(1,2)], 'YData', [backry(1,1), backry(1,3)]);
 
 leftPane = imtransform(im, leftTran, 'XData', [leftDest(1,1), leftDest(1,2)], 'YData', [leftDest(2,1), leftDest(2,3)]);
+
+rigthPane = imtransform(im, rigthTran, 'XData', [rightDest(1,1), rightDest(1,2)], 'YData', [rightDest(2,1), rightDest(2,3)]);
+
+
 
 planex = [0 0 0; 0 0 0];
 planey = [-1 0 1; -1 0 1];

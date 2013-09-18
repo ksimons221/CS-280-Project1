@@ -61,24 +61,24 @@ floorIm = imtransform(im,floorTran);
 leftIm = imtransform(im,leftTran);
 rightIm = imtransform(im,rightTran);
 
-% display the expended image
-figure(2);
-%imshow(backPane);
-%imshow(ceilPane);
-imshow(ceilIm);
-return
 
 
 
-ceilPane = imtransform(im, ceilTran, 'XData', [ceilingDest(1,1), ceilingDest(1,2)], 'YData', [ceilingDest(2,1), ceilingDest(2,3)]);
+
+ceilPane = imtransform(im, ceilTran, 'XData', [destCeiling(1,1), destCeiling(1,2)], 'YData', [destCeiling(2,1), destCeiling(2,3)]);
 
 backPane = imtransform(im, maketform('projective', eye(3)),'XData', [backrx(1,1), backrx(1,2)], 'YData', [backry(1,1), backry(1,3)]);
 
-leftPane = imtransform(im, leftTran, 'XData', [leftDest(1,1), leftDest(1,2)], 'YData', [leftDest(2,1), leftDest(2,3)]);
+leftPane = imtransform(im, leftTran, 'XData', [destLeft(1,1), destLeft(1,2)], 'YData', [destLeft(2,1), destLeft(2,3)]);
 
-rigthPane = imtransform(im, rigthTran, 'XData', [rightDest(1,1), rightDest(1,2)], 'YData', [rightDest(2,1), rightDest(2,3)]);
+rigthPane = imtransform(im, rightTran, 'XData', [destRight(1,1), destRight(1,2)], 'YData', [destRight(2,1), destRight(2,3)]);
 
-
+% display the expended image
+figure(2);
+imshow(ceilIm);
+%imshow(ceilPane);
+%imshow(floorIm);
+return
 
 planex = [0 0 0; 0 0 0];
 planey = [-1 0 1; -1 0 1];
