@@ -10,57 +10,20 @@ function [h, t] = computeH(s, d)
     %% Use maketform to generate a transformation that imtransform will 
     % understand.
 
-
-    [n,m] = size(s);
-    [q,r] = size(d);
-    depth = d(1,2);
-    
-    depthRow = ones(1,r).*depth;
-    
-    sHomogeneous = [s; ones(1,m)];
-    dHomogeneous = [d; ones(1,r)];
-    dHomogeneous = dHomogeneous.*depth;
-    
-    h = dHomogeneous * sHomogeneous' * (sHomogeneous * sHomogeneous')^-1;
-    t = maketform('projective', h');
-    %return;
-    
-    ColumnSource1 = sHomogeneous(:,1);  
-    ColumnSource2 = sHomogeneous(:,2);  
-    ColumnSource3 = sHomogeneous(:,3);  
-    ColumnSource4 = sHomogeneous(:,4);  
-
-    
-    
-    
-    sInverse = pinv(sHomogeneous);
-    newh = dHomogeneous * sInverse;
-    temph = mldivide(dHomogeneous, sHomogeneous);
-    h = sHomogeneous\dHomogeneous;
-    t = 1;
-    
-    n = 4;
-    x = d(1, :);
-    y = d(2,:); 
-    X = s(1,:);
-    Y = s(2,:);
-rows0 = zeros(3, 4);
-rowsXY = -[X; Y; ones(1,4)];
-hx = [rowsXY; rows0; x.*X; x.*Y; x];
-hy = [rows0; rowsXY; y.*X; y.*Y; y];
-h = [hx hy];
-if n == 4
-    [U, ~, ~] = svd(h);
-else
-    [U, ~, ~] = svd(h, 'econ');
-end
-v = (reshape(U(:,9), 3, 3)).';
-h = v./v(3,3);    
-
-t = maketform('projective', h');
-
-
-
+    A = [-s(1,1) -s(2,1) -1 0 0 0 d(1,1)*s(1,1) d(1,1)*s(2,1);
+        0 0 0 -s(1,1) -s(2,1) -1 d(2,1)*s(1,1) d(2,1)*s(2,1);
+        -s(1,2) -s(2,2) -1 0 0 0 d(1,2)*s(1,2) d(1,2)*s(2,2);
+        0 0 0 -s(1,2) -s(2,2) -1 d(2,2)*s(1,2) d(2,2)*s(2,2);
+        -s(1,3) -s(2,3) -1 0 0 0 d(1,3)*s(1,3) d(1,3)*s(2,3);
+        0 0 0 -s(1,3) -s(2,3) -1 d(2,3)*s(1,3) d(2,3)*s(2,3);
+        -s(1,4) -s(2,4) -1 0 0 0 d(1,4)*s(1,4) d(1,4)*s(2,4);
+        0 0 0 -s(1,4) -s(2,4) -1 d(2,4)*s(1,4) d(2,4)*s(2,4)];
         
+        
+    b = [-d(1,1); -d(2,1); -d(1,2); -d(2,2); -d(1,3); -d(2,3); -d(1,4); -d(2,4)];
+    h = A\b;
+    h = [h; 1];
+    h = reshape(h, 3, 3)';
+    t = maketform('projective', h');
     
 end

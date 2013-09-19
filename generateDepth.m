@@ -1,5 +1,5 @@
 function [depth] = generateDepth(a, h, f)
-%generate Deapth. Generates the z coordrinates for the 5 planes
+%generate Depth. Computes similar triangle calculation.
 depth = f*(h/a) - f;
 end
 
