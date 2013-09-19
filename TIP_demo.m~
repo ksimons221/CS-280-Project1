@@ -73,6 +73,7 @@ destCeiling = generateSquare(widthCeiling,depthCeiling);
 destLeft = generateSquare(depthLeft, heightLeft);
 destRight = generateSquare(depthRight, heightRight);
 
+destCeiling2 = [0,destCeiling(2,3), destCeiling(2,3), 0; 0, 0, destCeiling(1,2), destCeiling(1,2)  ];
 
 
 %destFloor = [0,destFloor(2,3), destFloor(2,3), 0; 0, 0, destFloor(1,2), destFloor(1,2)  ];
@@ -94,10 +95,6 @@ ceilIm = imtransform(im,ceilTran, 'XYScale',1);
 floorIm = imtransform(im,floorTran, 'XYScale',1);
 leftIm = imtransform(im,leftTran, 'XYScale',1);
 rightIm = imtransform(im,rightTran, 'XYScale',1);
-
-leftCornerFloor = [srcFloor(1,1); srcFloor(2,1); 1];
-locationFloor = floorH * leftCornerFloor;
-keyboard;
 
 
 ceilPane = imtransform(im, ceilTran, 'XData', [destCeiling(1,1), destCeiling(1,2)], 'YData', [destCeiling(2,1), destCeiling(2,3)]);
