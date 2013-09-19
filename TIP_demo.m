@@ -12,11 +12,11 @@ close all;
 f = 800;
 
 
-im = imread('sjerome.jpg');
-
+%startImage = imread('sjerome.jpg');
+startImage = imread('pic2.jpg');
 % Run the GUI in Figure 1
 figure(1);
-[vx,vy,irx,iry,orx,ory] = TIP_GUI(im);
+[vx,vy,irx,iry,orx,ory] = TIP_GUI(startImage);
 
 oldvx = vx;
 
@@ -24,32 +24,9 @@ oldvy = vy;
 % Find the cube faces and compute the expended image
 [bim,bim_alpha,vx,vy,ceilrx,ceilry,floorrx,floorry,...
     leftrx,leftry,rightrx,rightry,backrx,backry] = ...
-    TIP_get5rects(im,vx,vy,irx,iry,orx,ory);
+    TIP_get5rects(startImage,vx,vy,irx,iry,orx,ory);
 
-
-[ymax,xmax,cdepth] = size(im);
-
-lmargin = -min(orx);
-rmargin = max(orx) - xmax;
-tmargin = -min(ory);
-bmargin = max(ory) - ymax;
-
-paddingVY = abs(oldvy - vy);
-paddingVX = abs(oldvx - vx);
-
-%keyboard;
-
-lmargin = 0;
-rmargin = 0;
-tmargin = 0;
-bmargin = 0;
-
-
-
-paddingVY = 0;
-paddingVX = 0;
-
-%keyboard;
+[ymax,xmax,cdepth] = size(bim);
 
 depthFloor =generateDepth(abs(vy-floorry(1)),abs(vy-floorry(3)),f);
 depthCeiling = generateDepth(abs(vy-ceilry(3)),abs(vy-ceilry(1)),f);
@@ -64,20 +41,10 @@ widthCeiling = abs(ceilrx(1) - ceilrx(2));
 heightLeft = abs(leftry(1) - leftry(4));
 heightRight = abs(rightry(2) - rightry(3));
 
-%destFloor = generateSquare(depthFloor,widthFloor);   %WEIRD HACK IS
-%BACKWARDS BUT MAKES THEM SQUARE LOOKS WAY BETTER
-
-
 destFloor = generateSquare(widthFloor,depthFloor);
 destCeiling = generateSquare(widthCeiling,depthCeiling);
 destLeft = generateSquare(depthLeft, heightLeft);
 destRight = generateSquare(depthRight, heightRight);
-
-
-
-%destFloor = [0,destFloor(2,3), destFloor(2,3), 0; 0, 0, destFloor(1,2), destFloor(1,2)  ];
-
-
 
 srcFloor = [floorrx;floorry];
 srcCeiling = [ceilrx; ceilry];
@@ -90,31 +57,23 @@ srcLeft = [leftrx; leftry];
 [ceilH, ceilTran] = computeHTIM(srcCeiling, destCeiling);
 
 
-ceilIm = imtransform(im,ceilTran, 'XYScale',1);
-floorIm = imtransform(im,floorTran, 'XYScale',1);
-leftIm = imtransform(im,leftTran, 'XYScale',1);
-rightIm = imtransform(im,rightTran, 'XYScale',1);
-
-leftCornerFloor = [srcFloor(1,1); srcFloor(2,1); 1];
-locationFloor = floorH * leftCornerFloor;
-keyboard;
 
 
-ceilPane = imtransform(im, ceilTran, 'XData', [destCeiling(1,1), destCeiling(1,2)], 'YData', [destCeiling(2,1), destCeiling(2,3)]);
+ceilPane = imtransform(bim, ceilTran, 'XData', [destCeiling(1,1), destCeiling(1,2)], 'YData', [destCeiling(2,1), destCeiling(2,3)]);
 
-backPane = imtransform(im, maketform('projective', eye(3)),'XData', [backrx(1,1)-paddingVX, backrx(1,2)-paddingVX], 'YData', [backry(1,1)-paddingVY, backry(1,3)-paddingVY]);
+backPane = imtransform(bim, maketform('projective', eye(3)),'XData', [backrx(1,1), backrx(1,2)], 'YData', [backry(1,1), backry(1,3)]);
 
-floorPane = imtransform(im, floorTran, 'XData', [destFloor(1,1), destFloor(1,2)], 'YData', [destFloor(1,1)-bmargin, destFloor(1,3)-bmargin]);
+floorPane = imtransform(bim, floorTran, 'XData', [destFloor(1,1), destFloor(1,2)], 'YData', [destFloor(2,1), destFloor(2,3)]);
 
-leftPane = imtransform(im, leftTran, 'XData', [destLeft(1,1)-lmargin, destLeft(1,2)-lmargin], 'YData', [destLeft(2,1), destLeft(2,3)]);
+leftPane = imtransform(bim, leftTran, 'XData', [destLeft(1,1), destLeft(1,2)], 'YData', [destLeft(2,1), destLeft(2,3)]);
 
-rightPane = imtransform(im, rightTran, 'XData', [destRight(1,1)-rmargin, destRight(1,2)-rmargin], 'YData', [destRight(2,1), destRight(2,3)]);
+rightPane = imtransform(bim, rightTran, 'XData', [destRight(1,1), destRight(1,2)], 'YData', [destRight(2,1), destRight(2,3)]);
 
 
-tempCeil = imtransform(ceilIm, maketform('projective', eye(3)), 'XData', [1000, 2000], 'YData', [2100, 3000]);
+%tempCeil = imtransform(ceilIm, maketform('projective', eye(3)));%, 'XData', [0, 2000], 'YData', [0000, 3000]);
 % display the expended image
 figure(2);
-%imshow(ceilPane);
+%imshow(floorIm);
 %return
 
 backMesh = true;
